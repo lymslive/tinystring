@@ -1,0 +1,120 @@
+## tast_basic_append
+| sizeof(str16) => 16
+| sizeof(str32) => 32
+| sizeof(str64) => 64
+| sizeof(str128) => 128
+| sizeof(str256) => 256
+| str16.capacity() => 15
+| str32.capacity() => 31
+| str64.capacity() => 63
+| str128.capacity() => 127
+| str256.capacity() => 255
+| str16.size() => 0
+| str32.size() => 0
+| str64.size() => 0
+| str128.size() => 0
+| str256.size() => 0
+1358042**98
+| str16.capacity() => 15
+| str16.size() => 11
+31 33 35 38 30 34 32 2A 2A 39 38 0 0 0 0 B 
+abcdefghijklmnopqrstuvwxyz
+| str32.size() => 26
+61 62 63 64 65 66 67 68 69 6A 6B 6C 6D 6E 6F 70 71 72 73 74 75 76 77 78 79 7A 0 0 0 0 0 1A 
+abcdefghijklmnopqrstuvwxyzABCDE
+| str32.size() => 31
+61 62 63 64 65 66 67 68 69 6A 6B 6C 6D 6E 6F 70 71 72 73 74 75 76 77 78 79 7A 41 42 43 44 45 0 
+
+## tast_operator
+| p32->capacity() => 31
+| p32->size() => 4
+| p32->length() => 4
+1234
+| p32->size() => 5
+1234$
+| p32->size() => 10
+1234$$4321
+| p32->size() => 16
+1234$$4321#@abcd
+| s32.size() => 4
+abcd
+| s32.size() => 16
+1234$$4321#@abcd
+| p32->size() => 0
+| p32->empty() => 1
+
+## tast_ustring_conversion
+| str.capacity() => 15
+| p16 != nullptr => 1
+| str.capacity() => 31
+| p32 != nullptr => 1
+| str.capacity() => 63
+| p64 != nullptr => 1
+| str.capacity() => 127
+| p128 != nullptr => 1
+| str.capacity() => 255
+| p256 != nullptr => 1
+| str.capacity() => 510
+| p512 != nullptr => 0
+| str.small_string() => 0
+| str.middle_string() => 1
+| str.size() => 0
+
+## tast_ustring_autolarge
+| str.capacity() => 15
+| str.size() => 0
+push a-z times: 0
+| str.capacity() => 31
+| str.size() => 26
+abcdefghijklmnopqrstuvwxyz
+| str.capacity() => 63
+| str.size() => 52
+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+push a-z times: 1
+| str.capacity() => 127
+| str.size() => 78
+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+| str.capacity() => 127
+| str.size() => 104
+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+push a-z times: 2
+| str.capacity() => 255
+| str.size() => 130
+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+| str.capacity() => 255
+| str.size() => 156
+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+push a-z times: 3
+| str.capacity() => 255
+| str.size() => 182
+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+| str.capacity() => 255
+| str.size() => 208
+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+push a-z times: 4
+| str.capacity() => 255
+| str.size() => 234
+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+| str.capacity() => 382
+| str.size() => 260
+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+
+## tast_ustring_autolarge_appendc
+| str.capacity() => 15
+| str.size() => 0
+| str.capacity() => 63
+| str.size() => 52
+ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+| str.capacity() => 127
+| str.size() => 104
+ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+| str.capacity() => 255
+| str.size() => 156
+ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+| str.capacity() => 255
+| str.size() => 208
+ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+| str.capacity() => 382
+| str.size() => 260
+ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+
