@@ -1,4 +1,4 @@
-#include "allocator.h"
+#include "string_allocator.hpp"
 #include <cstring>
 #include <iostream>
 #include <cstdlib>
@@ -22,11 +22,11 @@ void TFencodeSize(char* ptr, SizeT size)
 }
 
 // SIZE <= 256; then use the tail char byte to store string length
-template <int SIZE>
+template <int SIZE, typename Allocator = tinypool>
 class basic_tiny_string
 {
 public:
-    typedef basic_tiny_string<SIZE> selfType;
+    typedef basic_tiny_string<SIZE> self_type;
 
 private:
     char _str[SIZE];
@@ -122,6 +122,25 @@ private:
         TFencodeSize(data() + SIZE - 1, sz);
     }
 
+public:
+    void* operator new(size_t sz)
+    {
+#ifdef DEV_DEBUG
+        std::cout << "basic_tiny_string<>::operator new called" << std::endl;
+#endif
+        Allocator a;
+        return a.allocate(sz);
+    }
+
+    void operator delete(void* p, size_t sz)
+    {
+#ifdef DEV_DEBUG
+        std::cout << "basic_tiny_string<>::operator delete called" << std::endl;
+#endif
+        Allocator a;
+        return a.deallocate(static_cast<char*>(p), sz);
+    }
+
 #include "stringimp.inc.hpp"
 };
 
@@ -131,10 +150,17 @@ typedef basic_tiny_string<64> char_64t;
 typedef basic_tiny_string<128> char_128t;
 typedef basic_tiny_string<256> char_256t;
 
+template <typename Allocator = tinypool>
 class united_tiny_string
 {
 public:
-    typedef united_tiny_string selfType;
+    typedef united_tiny_string self_type;
+    typedef basic_tiny_string<16, Allocator> str16_t;
+    typedef basic_tiny_string<32, Allocator> str32_t;
+    typedef basic_tiny_string<64, Allocator> str64_t;
+    typedef basic_tiny_string<128, Allocator> str128_t;
+    typedef basic_tiny_string<256, Allocator> str256_t;
+    typedef unsigned int size_type;
 
 private:
     struct SHeapMeta
@@ -179,7 +205,7 @@ public:
     {
         if (false == tiny_string())
         {
-            free(_umemory.str);
+            _deallocate(_umemory.str, _full_size());
             _umemory.str = nullptr;
         }
     }
@@ -271,7 +297,7 @@ public:
         return 0xFFFFFFFF;
     }
 
-    selfType& append(char c)
+    self_type& append(char c)
     {
         size_t iSize = size();
         bool flag = false;
@@ -300,7 +326,7 @@ public:
         return *this;
     }
 
-    selfType& append(const char* str, size_t len = 0)
+    self_type& append(const char* str, size_t len = 0)
     {
         if (len == 0)
         {
@@ -490,12 +516,13 @@ private:
         }
 
         size_t preSize = size();
+        size_t oldSize = _full_size();
         char* pOldData = data();
         bool hasHeap = !tiny_string();
 
         size_t newSize = _enlarge_size(target);
         char* pNewStr = nullptr;
-        pNewStr = (char*) malloc(newSize);
+        pNewStr = (char*) _allocate(newSize);
         if (nullptr == pNewStr)
         {
             return false;
@@ -526,13 +553,25 @@ private:
 
         if (hasHeap)
         {
-            free(pOldData);
+            _deallocate(pOldData, oldSize);
         }
 
         return true;
     }
 
+    void* _allocate(size_t sz)
+    {
+        Allocator a;
+        return a.allocate(sz);
+    }
+
+    void _deallocate(char* p, size_t sz)
+    {
+        Allocator a;
+        return a.deallocate(p, sz);
+    }
+
 #include "stringimp.inc.hpp"
 };
 
-typedef united_tiny_string ustring;
+typedef united_tiny_string<> ustring;

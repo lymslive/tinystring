@@ -1,0 +1,575 @@
+## tast_pool_alone
+-- alloctor property
+| sizeof(allocator) => 1
+| allocator == other => 1
+-- alloc 32
+>> malloc free space: 512/32
+>> Split free bock: 32[0]
+>> Return free bock: 32[0]
+| p32 != nullptr => 1
+| p32 => 0x7fffe4ea1080
+>> free pointer[0]: 0x7fffe4ea10a0
+>> free pointer[0]: 0x7fffe4ea10c0
+>> free pointer[0]: 0x7fffe4ea10e0
+>> free pointer[0]: 0x7fffe4ea1100
+>> free pointer[0]: 0x7fffe4ea1120
+>> free pointer[0]: 0x7fffe4ea1140
+>> free pointer[0]: 0x7fffe4ea1160
+beyondAllocTimes = 0
+beyondFreeTimes = 0
+allocateTimes = 1
+allocateSpace = 32
+deallocateTimes = 0
+deallocateSpace = 0
+freeSpace = 256
+freeBlock(32) = 7
+freeBlock(64) = 0
+freeBlock(128) = 0
+freeBlock(256) = 0
+totalTimes = 1
+total = 512
+blance = 0
+
+-- alloc 64
+>> Split free bock: 64[1]
+>> Return free bock: 64[1]
+| p64 != nullptr => 1
+| p64 => 0x7fffe4ea1180
+>> free pointer[0]: 0x7fffe4ea10a0
+>> free pointer[0]: 0x7fffe4ea10c0
+>> free pointer[0]: 0x7fffe4ea10e0
+>> free pointer[0]: 0x7fffe4ea1100
+>> free pointer[0]: 0x7fffe4ea1120
+>> free pointer[0]: 0x7fffe4ea1140
+>> free pointer[0]: 0x7fffe4ea1160
+>> free pointer[1]: 0x7fffe4ea11c0
+>> free pointer[1]: 0x7fffe4ea1200
+>> free pointer[1]: 0x7fffe4ea1240
+beyondAllocTimes = 0
+beyondFreeTimes = 0
+allocateTimes = 2
+allocateSpace = 96
+deallocateTimes = 0
+deallocateSpace = 0
+freeSpace = 0
+freeBlock(32) = 7
+freeBlock(64) = 3
+freeBlock(128) = 0
+freeBlock(256) = 0
+totalTimes = 1
+total = 512
+blance = 0
+
+-- alloc 128
+>> malloc free space: 2048/128
+>> Split free bock: 128[2]
+>> Return free bock: 128[2]
+| p128 != nullptr => 1
+>> free pointer[0]: 0x7fffe4ea10a0
+>> free pointer[0]: 0x7fffe4ea10c0
+>> free pointer[0]: 0x7fffe4ea10e0
+>> free pointer[0]: 0x7fffe4ea1100
+>> free pointer[0]: 0x7fffe4ea1120
+>> free pointer[0]: 0x7fffe4ea1140
+>> free pointer[0]: 0x7fffe4ea1160
+>> free pointer[1]: 0x7fffe4ea11c0
+>> free pointer[1]: 0x7fffe4ea1200
+>> free pointer[1]: 0x7fffe4ea1240
+>> free pointer[2]: 0x7fffe4ea1310
+>> free pointer[2]: 0x7fffe4ea1390
+>> free pointer[2]: 0x7fffe4ea1410
+>> free pointer[2]: 0x7fffe4ea1490
+>> free pointer[2]: 0x7fffe4ea1510
+>> free pointer[2]: 0x7fffe4ea1590
+>> free pointer[2]: 0x7fffe4ea1610
+beyondAllocTimes = 0
+beyondFreeTimes = 0
+allocateTimes = 3
+allocateSpace = 224
+deallocateTimes = 0
+deallocateSpace = 0
+freeSpace = 1024
+freeBlock(32) = 7
+freeBlock(64) = 3
+freeBlock(128) = 7
+freeBlock(256) = 0
+totalTimes = 2
+total = 2560
+blance = 0
+
+-- alloc 256
+>> Split free bock: 256[3]
+>> Return free bock: 256[3]
+| p256 != nullptr => 1
+>> free pointer[0]: 0x7fffe4ea10a0
+>> free pointer[0]: 0x7fffe4ea10c0
+>> free pointer[0]: 0x7fffe4ea10e0
+>> free pointer[0]: 0x7fffe4ea1100
+>> free pointer[0]: 0x7fffe4ea1120
+>> free pointer[0]: 0x7fffe4ea1140
+>> free pointer[0]: 0x7fffe4ea1160
+>> free pointer[1]: 0x7fffe4ea11c0
+>> free pointer[1]: 0x7fffe4ea1200
+>> free pointer[1]: 0x7fffe4ea1240
+>> free pointer[2]: 0x7fffe4ea1310
+>> free pointer[2]: 0x7fffe4ea1390
+>> free pointer[2]: 0x7fffe4ea1410
+>> free pointer[2]: 0x7fffe4ea1490
+>> free pointer[2]: 0x7fffe4ea1510
+>> free pointer[2]: 0x7fffe4ea1590
+>> free pointer[2]: 0x7fffe4ea1610
+>> free pointer[3]: 0x7fffe4ea1790
+>> free pointer[3]: 0x7fffe4ea1890
+>> free pointer[3]: 0x7fffe4ea1990
+beyondAllocTimes = 0
+beyondFreeTimes = 0
+allocateTimes = 4
+allocateSpace = 480
+deallocateTimes = 0
+deallocateSpace = 0
+freeSpace = 0
+freeBlock(32) = 7
+freeBlock(64) = 3
+freeBlock(128) = 7
+freeBlock(256) = 3
+totalTimes = 2
+total = 2560
+blance = 0
+
+-- alloc 300: should not alloc in pool
+>> new space beyond pool
+| p300 != nullptr => 1
+>> free pointer[0]: 0x7fffe4ea10a0
+>> free pointer[0]: 0x7fffe4ea10c0
+>> free pointer[0]: 0x7fffe4ea10e0
+>> free pointer[0]: 0x7fffe4ea1100
+>> free pointer[0]: 0x7fffe4ea1120
+>> free pointer[0]: 0x7fffe4ea1140
+>> free pointer[0]: 0x7fffe4ea1160
+>> free pointer[1]: 0x7fffe4ea11c0
+>> free pointer[1]: 0x7fffe4ea1200
+>> free pointer[1]: 0x7fffe4ea1240
+>> free pointer[2]: 0x7fffe4ea1310
+>> free pointer[2]: 0x7fffe4ea1390
+>> free pointer[2]: 0x7fffe4ea1410
+>> free pointer[2]: 0x7fffe4ea1490
+>> free pointer[2]: 0x7fffe4ea1510
+>> free pointer[2]: 0x7fffe4ea1590
+>> free pointer[2]: 0x7fffe4ea1610
+>> free pointer[3]: 0x7fffe4ea1790
+>> free pointer[3]: 0x7fffe4ea1890
+>> free pointer[3]: 0x7fffe4ea1990
+beyondAllocTimes = 1
+beyondFreeTimes = 0
+allocateTimes = 4
+allocateSpace = 480
+deallocateTimes = 0
+deallocateSpace = 0
+freeSpace = 0
+freeBlock(32) = 7
+freeBlock(64) = 3
+freeBlock(128) = 7
+freeBlock(256) = 3
+totalTimes = 2
+total = 2560
+blance = 0
+
+-- alloc 200: should actually alloc 256
+>> Return free bock: 256[3]
+| p200 != nullptr => 1
+>> free pointer[0]: 0x7fffe4ea10a0
+>> free pointer[0]: 0x7fffe4ea10c0
+>> free pointer[0]: 0x7fffe4ea10e0
+>> free pointer[0]: 0x7fffe4ea1100
+>> free pointer[0]: 0x7fffe4ea1120
+>> free pointer[0]: 0x7fffe4ea1140
+>> free pointer[0]: 0x7fffe4ea1160
+>> free pointer[1]: 0x7fffe4ea11c0
+>> free pointer[1]: 0x7fffe4ea1200
+>> free pointer[1]: 0x7fffe4ea1240
+>> free pointer[2]: 0x7fffe4ea1310
+>> free pointer[2]: 0x7fffe4ea1390
+>> free pointer[2]: 0x7fffe4ea1410
+>> free pointer[2]: 0x7fffe4ea1490
+>> free pointer[2]: 0x7fffe4ea1510
+>> free pointer[2]: 0x7fffe4ea1590
+>> free pointer[2]: 0x7fffe4ea1610
+>> free pointer[3]: 0x7fffe4ea1890
+>> free pointer[3]: 0x7fffe4ea1990
+beyondAllocTimes = 1
+beyondFreeTimes = 0
+allocateTimes = 5
+allocateSpace = 736
+deallocateTimes = 0
+deallocateSpace = 0
+freeSpace = 0
+freeBlock(32) = 7
+freeBlock(64) = 3
+freeBlock(128) = 7
+freeBlock(256) = 2
+totalTimes = 2
+total = 2560
+blance = 0
+
+-- alloc 100: actually alloc 128
+>> Return free bock: 128[2]
+| p100 != nullptr => 1
+>> free pointer[0]: 0x7fffe4ea10a0
+>> free pointer[0]: 0x7fffe4ea10c0
+>> free pointer[0]: 0x7fffe4ea10e0
+>> free pointer[0]: 0x7fffe4ea1100
+>> free pointer[0]: 0x7fffe4ea1120
+>> free pointer[0]: 0x7fffe4ea1140
+>> free pointer[0]: 0x7fffe4ea1160
+>> free pointer[1]: 0x7fffe4ea11c0
+>> free pointer[1]: 0x7fffe4ea1200
+>> free pointer[1]: 0x7fffe4ea1240
+>> free pointer[2]: 0x7fffe4ea1390
+>> free pointer[2]: 0x7fffe4ea1410
+>> free pointer[2]: 0x7fffe4ea1490
+>> free pointer[2]: 0x7fffe4ea1510
+>> free pointer[2]: 0x7fffe4ea1590
+>> free pointer[2]: 0x7fffe4ea1610
+>> free pointer[3]: 0x7fffe4ea1890
+>> free pointer[3]: 0x7fffe4ea1990
+beyondAllocTimes = 1
+beyondFreeTimes = 0
+allocateTimes = 6
+allocateSpace = 864
+deallocateTimes = 0
+deallocateSpace = 0
+freeSpace = 0
+freeBlock(32) = 7
+freeBlock(64) = 3
+freeBlock(128) = 6
+freeBlock(256) = 2
+totalTimes = 2
+total = 2560
+blance = 0
+
+-- alloc 50: actually alloc 64
+>> Return free bock: 64[1]
+| p50 != nullptr => 1
+>> free pointer[0]: 0x7fffe4ea10a0
+>> free pointer[0]: 0x7fffe4ea10c0
+>> free pointer[0]: 0x7fffe4ea10e0
+>> free pointer[0]: 0x7fffe4ea1100
+>> free pointer[0]: 0x7fffe4ea1120
+>> free pointer[0]: 0x7fffe4ea1140
+>> free pointer[0]: 0x7fffe4ea1160
+>> free pointer[1]: 0x7fffe4ea1200
+>> free pointer[1]: 0x7fffe4ea1240
+>> free pointer[2]: 0x7fffe4ea1390
+>> free pointer[2]: 0x7fffe4ea1410
+>> free pointer[2]: 0x7fffe4ea1490
+>> free pointer[2]: 0x7fffe4ea1510
+>> free pointer[2]: 0x7fffe4ea1590
+>> free pointer[2]: 0x7fffe4ea1610
+>> free pointer[3]: 0x7fffe4ea1890
+>> free pointer[3]: 0x7fffe4ea1990
+beyondAllocTimes = 1
+beyondFreeTimes = 0
+allocateTimes = 7
+allocateSpace = 928
+deallocateTimes = 0
+deallocateSpace = 0
+freeSpace = 0
+freeBlock(32) = 7
+freeBlock(64) = 2
+freeBlock(128) = 6
+freeBlock(256) = 2
+totalTimes = 2
+total = 2560
+blance = 0
+
+-- alloc 25: actually alloc 32
+>> Return free bock: 32[0]
+| p25 != nullptr => 1
+>> free pointer[0]: 0x7fffe4ea10c0
+>> free pointer[0]: 0x7fffe4ea10e0
+>> free pointer[0]: 0x7fffe4ea1100
+>> free pointer[0]: 0x7fffe4ea1120
+>> free pointer[0]: 0x7fffe4ea1140
+>> free pointer[0]: 0x7fffe4ea1160
+>> free pointer[1]: 0x7fffe4ea1200
+>> free pointer[1]: 0x7fffe4ea1240
+>> free pointer[2]: 0x7fffe4ea1390
+>> free pointer[2]: 0x7fffe4ea1410
+>> free pointer[2]: 0x7fffe4ea1490
+>> free pointer[2]: 0x7fffe4ea1510
+>> free pointer[2]: 0x7fffe4ea1590
+>> free pointer[2]: 0x7fffe4ea1610
+>> free pointer[3]: 0x7fffe4ea1890
+>> free pointer[3]: 0x7fffe4ea1990
+beyondAllocTimes = 1
+beyondFreeTimes = 0
+allocateTimes = 8
+allocateSpace = 960
+deallocateTimes = 0
+deallocateSpace = 0
+freeSpace = 0
+freeBlock(32) = 6
+freeBlock(64) = 2
+freeBlock(128) = 6
+freeBlock(256) = 2
+totalTimes = 2
+total = 2560
+blance = 0
+
+-- alloc 12: actually alloc 32, min block in pool
+>> Return free bock: 32[0]
+| p12 != nullptr => 1
+>> free pointer[0]: 0x7fffe4ea10e0
+>> free pointer[0]: 0x7fffe4ea1100
+>> free pointer[0]: 0x7fffe4ea1120
+>> free pointer[0]: 0x7fffe4ea1140
+>> free pointer[0]: 0x7fffe4ea1160
+>> free pointer[1]: 0x7fffe4ea1200
+>> free pointer[1]: 0x7fffe4ea1240
+>> free pointer[2]: 0x7fffe4ea1390
+>> free pointer[2]: 0x7fffe4ea1410
+>> free pointer[2]: 0x7fffe4ea1490
+>> free pointer[2]: 0x7fffe4ea1510
+>> free pointer[2]: 0x7fffe4ea1590
+>> free pointer[2]: 0x7fffe4ea1610
+>> free pointer[3]: 0x7fffe4ea1890
+>> free pointer[3]: 0x7fffe4ea1990
+beyondAllocTimes = 1
+beyondFreeTimes = 0
+allocateTimes = 9
+allocateSpace = 992
+deallocateTimes = 0
+deallocateSpace = 0
+freeSpace = 0
+freeBlock(32) = 5
+freeBlock(64) = 2
+freeBlock(128) = 6
+freeBlock(256) = 2
+totalTimes = 2
+total = 2560
+blance = 0
+
+-- free 32 64 128 256 blocks
+>> free pointer[0]: 0x7fffe4ea1080
+>> free pointer[0]: 0x7fffe4ea10e0
+>> free pointer[0]: 0x7fffe4ea1100
+>> free pointer[0]: 0x7fffe4ea1120
+>> free pointer[0]: 0x7fffe4ea1140
+>> free pointer[0]: 0x7fffe4ea1160
+>> free pointer[1]: 0x7fffe4ea1180
+>> free pointer[1]: 0x7fffe4ea1200
+>> free pointer[1]: 0x7fffe4ea1240
+>> free pointer[2]: 0x7fffe4ea1290
+>> free pointer[2]: 0x7fffe4ea1390
+>> free pointer[2]: 0x7fffe4ea1410
+>> free pointer[2]: 0x7fffe4ea1490
+>> free pointer[2]: 0x7fffe4ea1510
+>> free pointer[2]: 0x7fffe4ea1590
+>> free pointer[2]: 0x7fffe4ea1610
+>> free pointer[3]: 0x7fffe4ea1690
+>> free pointer[3]: 0x7fffe4ea1890
+>> free pointer[3]: 0x7fffe4ea1990
+beyondAllocTimes = 1
+beyondFreeTimes = 0
+allocateTimes = 9
+allocateSpace = 992
+deallocateTimes = 4
+deallocateSpace = 480
+freeSpace = 0
+freeBlock(32) = 6
+freeBlock(64) = 3
+freeBlock(128) = 7
+freeBlock(256) = 3
+totalTimes = 2
+total = 2560
+blance = 0
+
+-- free 300: also not free by pool
+>> delete space beyond pool
+>> free pointer[0]: 0x7fffe4ea1080
+>> free pointer[0]: 0x7fffe4ea10e0
+>> free pointer[0]: 0x7fffe4ea1100
+>> free pointer[0]: 0x7fffe4ea1120
+>> free pointer[0]: 0x7fffe4ea1140
+>> free pointer[0]: 0x7fffe4ea1160
+>> free pointer[1]: 0x7fffe4ea1180
+>> free pointer[1]: 0x7fffe4ea1200
+>> free pointer[1]: 0x7fffe4ea1240
+>> free pointer[2]: 0x7fffe4ea1290
+>> free pointer[2]: 0x7fffe4ea1390
+>> free pointer[2]: 0x7fffe4ea1410
+>> free pointer[2]: 0x7fffe4ea1490
+>> free pointer[2]: 0x7fffe4ea1510
+>> free pointer[2]: 0x7fffe4ea1590
+>> free pointer[2]: 0x7fffe4ea1610
+>> free pointer[3]: 0x7fffe4ea1690
+>> free pointer[3]: 0x7fffe4ea1890
+>> free pointer[3]: 0x7fffe4ea1990
+beyondAllocTimes = 1
+beyondFreeTimes = 1
+allocateTimes = 9
+allocateSpace = 992
+deallocateTimes = 4
+deallocateSpace = 480
+freeSpace = 0
+freeBlock(32) = 6
+freeBlock(64) = 3
+freeBlock(128) = 7
+freeBlock(256) = 3
+totalTimes = 2
+total = 2560
+blance = 0
+
+-- free 200: pass the actually size or not don't matter
+>> free pointer[0]: 0x7fffe4ea1080
+>> free pointer[0]: 0x7fffe4ea10e0
+>> free pointer[0]: 0x7fffe4ea1100
+>> free pointer[0]: 0x7fffe4ea1120
+>> free pointer[0]: 0x7fffe4ea1140
+>> free pointer[0]: 0x7fffe4ea1160
+>> free pointer[1]: 0x7fffe4ea1180
+>> free pointer[1]: 0x7fffe4ea1200
+>> free pointer[1]: 0x7fffe4ea1240
+>> free pointer[2]: 0x7fffe4ea1290
+>> free pointer[2]: 0x7fffe4ea1390
+>> free pointer[2]: 0x7fffe4ea1410
+>> free pointer[2]: 0x7fffe4ea1490
+>> free pointer[2]: 0x7fffe4ea1510
+>> free pointer[2]: 0x7fffe4ea1590
+>> free pointer[2]: 0x7fffe4ea1610
+>> free pointer[3]: 0x7fffe4ea1790
+>> free pointer[3]: 0x7fffe4ea1690
+>> free pointer[3]: 0x7fffe4ea1890
+>> free pointer[3]: 0x7fffe4ea1990
+beyondAllocTimes = 1
+beyondFreeTimes = 1
+allocateTimes = 9
+allocateSpace = 992
+deallocateTimes = 5
+deallocateSpace = 736
+freeSpace = 0
+freeBlock(32) = 6
+freeBlock(64) = 3
+freeBlock(128) = 7
+freeBlock(256) = 4
+totalTimes = 2
+total = 2560
+blance = 0
+
+-- free 100
+>> free pointer[0]: 0x7fffe4ea1080
+>> free pointer[0]: 0x7fffe4ea10e0
+>> free pointer[0]: 0x7fffe4ea1100
+>> free pointer[0]: 0x7fffe4ea1120
+>> free pointer[0]: 0x7fffe4ea1140
+>> free pointer[0]: 0x7fffe4ea1160
+>> free pointer[1]: 0x7fffe4ea1180
+>> free pointer[1]: 0x7fffe4ea1200
+>> free pointer[1]: 0x7fffe4ea1240
+>> free pointer[2]: 0x7fffe4ea1310
+>> free pointer[2]: 0x7fffe4ea1290
+>> free pointer[2]: 0x7fffe4ea1390
+>> free pointer[2]: 0x7fffe4ea1410
+>> free pointer[2]: 0x7fffe4ea1490
+>> free pointer[2]: 0x7fffe4ea1510
+>> free pointer[2]: 0x7fffe4ea1590
+>> free pointer[2]: 0x7fffe4ea1610
+>> free pointer[3]: 0x7fffe4ea1790
+>> free pointer[3]: 0x7fffe4ea1690
+>> free pointer[3]: 0x7fffe4ea1890
+>> free pointer[3]: 0x7fffe4ea1990
+beyondAllocTimes = 1
+beyondFreeTimes = 1
+allocateTimes = 9
+allocateSpace = 992
+deallocateTimes = 6
+deallocateSpace = 864
+freeSpace = 0
+freeBlock(32) = 6
+freeBlock(64) = 3
+freeBlock(128) = 8
+freeBlock(256) = 4
+totalTimes = 2
+total = 2560
+blance = 0
+
+-- free 50
+>> free pointer[0]: 0x7fffe4ea1080
+>> free pointer[0]: 0x7fffe4ea10e0
+>> free pointer[0]: 0x7fffe4ea1100
+>> free pointer[0]: 0x7fffe4ea1120
+>> free pointer[0]: 0x7fffe4ea1140
+>> free pointer[0]: 0x7fffe4ea1160
+>> free pointer[1]: 0x7fffe4ea11c0
+>> free pointer[1]: 0x7fffe4ea1180
+>> free pointer[1]: 0x7fffe4ea1200
+>> free pointer[1]: 0x7fffe4ea1240
+>> free pointer[2]: 0x7fffe4ea1310
+>> free pointer[2]: 0x7fffe4ea1290
+>> free pointer[2]: 0x7fffe4ea1390
+>> free pointer[2]: 0x7fffe4ea1410
+>> free pointer[2]: 0x7fffe4ea1490
+>> free pointer[2]: 0x7fffe4ea1510
+>> free pointer[2]: 0x7fffe4ea1590
+>> free pointer[2]: 0x7fffe4ea1610
+>> free pointer[3]: 0x7fffe4ea1790
+>> free pointer[3]: 0x7fffe4ea1690
+>> free pointer[3]: 0x7fffe4ea1890
+>> free pointer[3]: 0x7fffe4ea1990
+beyondAllocTimes = 1
+beyondFreeTimes = 1
+allocateTimes = 9
+allocateSpace = 992
+deallocateTimes = 7
+deallocateSpace = 928
+freeSpace = 0
+freeBlock(32) = 6
+freeBlock(64) = 4
+freeBlock(128) = 8
+freeBlock(256) = 4
+totalTimes = 2
+total = 2560
+blance = 0
+
+-- free 25
+-- free 12
+>> free pointer[0]: 0x7fffe4ea10c0
+>> free pointer[0]: 0x7fffe4ea10a0
+>> free pointer[0]: 0x7fffe4ea1080
+>> free pointer[0]: 0x7fffe4ea10e0
+>> free pointer[0]: 0x7fffe4ea1100
+>> free pointer[0]: 0x7fffe4ea1120
+>> free pointer[0]: 0x7fffe4ea1140
+>> free pointer[0]: 0x7fffe4ea1160
+>> free pointer[1]: 0x7fffe4ea11c0
+>> free pointer[1]: 0x7fffe4ea1180
+>> free pointer[1]: 0x7fffe4ea1200
+>> free pointer[1]: 0x7fffe4ea1240
+>> free pointer[2]: 0x7fffe4ea1310
+>> free pointer[2]: 0x7fffe4ea1290
+>> free pointer[2]: 0x7fffe4ea1390
+>> free pointer[2]: 0x7fffe4ea1410
+>> free pointer[2]: 0x7fffe4ea1490
+>> free pointer[2]: 0x7fffe4ea1510
+>> free pointer[2]: 0x7fffe4ea1590
+>> free pointer[2]: 0x7fffe4ea1610
+>> free pointer[3]: 0x7fffe4ea1790
+>> free pointer[3]: 0x7fffe4ea1690
+>> free pointer[3]: 0x7fffe4ea1890
+>> free pointer[3]: 0x7fffe4ea1990
+beyondAllocTimes = 1
+beyondFreeTimes = 1
+allocateTimes = 9
+allocateSpace = 992
+deallocateTimes = 9
+deallocateSpace = 992
+freeSpace = 0
+freeBlock(32) = 8
+freeBlock(64) = 4
+freeBlock(128) = 8
+freeBlock(256) = 4
+totalTimes = 2
+total = 2560
+blance = 0
+
+

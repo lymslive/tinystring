@@ -1,8 +1,7 @@
 #include "../tinystring/tinystring.hpp"
 #include <iostream>
 #include <cstdio>
-
-#define COUT(expr) std::cout << "| " << #expr << " => " << (expr) << std::endl;
+#include "tast_util.hpp"
 
 #define DUMP_CHAR(str) DumpChar(str.c_str(), sizeof(str))
 void DumpChar(const char* str, size_t len)
@@ -211,11 +210,6 @@ void tast_ustring_autolarge_appendc()
         str.cout();
     }
 }
-
-#define TAST(fun) \
-    std::cout << "## " << #fun << std::endl; \
-    fun(); \
-    std::cout << std::endl;
 
 int main(int argc, char* argv[])
 {

@@ -74,31 +74,31 @@ const char& operator[](size_t pos) const
     return at(pos);
 }
 
-selfType& operator +=(char c)
+self_type& operator +=(char c)
 {
     append(c);
     return *this;
 }
 
-selfType& operator +=(const char* str)
+self_type& operator +=(const char* str)
 {
     append(str);
     return *this;
 }
 
-selfType& operator <<(char c)
+self_type& operator <<(char c)
 {
     append(c);
     return *this;
 }
 
-selfType& operator <<(const char* str)
+self_type& operator <<(const char* str)
 {
     append(str);
     return *this;
 }
 
-selfType& operator =(const char* str)
+self_type& operator =(const char* str)
 {
     clear();
     append(str);
