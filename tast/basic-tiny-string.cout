@@ -1,49 +1,73 @@
-## tast_basic_append
+## tast_basic_tiny
+-- sizeof typical tiny string
 || sizeof(str16) =~? 16
 || sizeof(str32) =~? 32
 || sizeof(str64) =~? 64
 || sizeof(str128) =~? 128
 || sizeof(str256) =~? 256
+-- and capaicty, should = sizeof - 1
 || str16.capacity() =~? 15
 || str32.capacity() =~? 31
 || str64.capacity() =~? 63
 || str128.capacity() =~? 127
 || str256.capacity() =~? 255
+-- default empy zero length string
 || str16.size() =~? 0
 || str32.size() =~? 0
 || str64.size() =~? 0
 || str128.size() =~? 0
 || str256.size() =~? 0
+-- normally grow string with append() method
 1358042**98
 || str16.capacity() =~? 15
 || str16.size() =~? 11
 31 33 35 38 30 34 32 2A 2A 39 38 0 0 0 0 B 
+-- str16 can store dec digits 0-9
+0123456789
+|| str16.capacity() =~? 15
+|| str16.size() =~? 10
+30 31 32 33 34 35 36 37 38 39 0 0 0 0 0 A 
+-- .. but cannot store hex digits, as must end with '\0'
+0123456789ABCDE
+|| str16.capacity() =~? 15
+|| str16.size() =~? 15
+30 31 32 33 34 35 36 37 38 39 41 42 43 44 45 0 
+-- str32 is enough to store all a-z 26 letters
 abcdefghijklmnopqrstuvwxyz
 || str32.size() =~? 26
 61 62 63 64 65 66 67 68 69 6A 6B 6C 6D 6E 6F 70 71 72 73 74 75 76 77 78 79 7A 0 0 0 0 0 1A 
+-- tiny string is fixed capacity, guard not overflow
 abcdefghijklmnopqrstuvwxyzABCDE
 || str32.size() =~? 31
 61 62 63 64 65 66 67 68 69 6A 6B 6C 6D 6E 6F 70 71 72 73 74 75 76 77 78 79 7A 41 42 43 44 45 0 
 
 ## tast_operator
+-- new tiny string in heap
 || p32->capacity() =~? 31
 || p32->size() =~? 4
 || p32->length() =~? 4
 1234
+-- push_back(c)
 || p32->size() =~? 5
 1234$
+-- operator += char or string, based append
 || p32->size() =~? 10
 1234$$4321
+-- operator << chains
 || p32->size() =~? 16
 1234$$4321#@abcd
+-- define tiny string in stack
 || s32.size() =~? 4
 abcd
+-- default operator= for tiny string, memory copy
 || s32.size() =~? 16
 1234$$4321#@abcd
+|| s32 == *p32 =~? 1
 || p32->size() =~? 0
 || p32->empty() =~? 1
 
 ## tast_ustring_conversion
+-- convert ustring to basic_tiny_string of different size
 || str.capacity() =~? 15
 || p16 != nullptr =~? 1
 || str.capacity() =~? 31
@@ -59,6 +83,10 @@ abcd
 || str.small_string() =~? 0
 || str.middle_string() =~? 1
 || str.size() =~? 0
+-- convert basic_tiny_string to usting with operator=
+|| p32 != nullptr =~? 1
+-- convert basic_tiny_string to usting with constructor
+|| p32 != nullptr =~? 1
 
 ## tast_ustring_autolarge
 || str.capacity() =~? 15
@@ -117,4 +145,28 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZab
 || str.capacity() =~? 382
 || str.size() =~? 260
 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+
+## tast_ustring_compare
+-- prepare lowStr and upStr:
+abcdefghijklmnopqrstuvwxyz
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+-- compre them with operators:
+|| lowStr == upStr =~? 0
+|| lowStr != upStr =~? 1
+|| lowStr <= upStr =~? 0
+|| lowStr >= upStr =~? 1
+|| lowStr < upStr =~? 0
+|| lowStr > upStr =~? 1
+-- make a copy of lowStr
+|| lowStr == lowCopy =~? 1
+|| lowStr != lowCopy =~? 0
+-- make double copy of lowStr
+abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz
+|| lowStr < doubleCopy =~? 1
+|| lowStr > doubleCopy =~? 0
+-- move operator:
+|| upStr == upMoveTo =~? 0
+|| upStr != upMoveTo =~? 1
+|| upStr.empty() =~? 1
+|| preMove == postMove =~? 1
 

@@ -2,6 +2,7 @@
 #include <cstring>
 #include <iostream>
 #include <cstdlib>
+#include <cstdio>
 
 // SizeT maybe one of [(unsgined) char, short, int]
 template <typename SizeT>
@@ -55,12 +56,13 @@ public:
 
     size_t size() const
     {
-        if (_str[0] == '\0')
+        const char* str = c_str();
+        if (nullptr == str || *str == '\0')
         {
             return 0;
         }
 
-        unsigned char iSize = _readSize();
+        size_t iSize = _read_size();
         if (iSize == 0)
         {
             return capacity();
@@ -77,10 +79,7 @@ public:
         if (_append_local(c))
         {
             unsigned char newSize = preSize + 1;
-            if (preSize == 0 || _str[SIZE-1] != '\0')
-            {
-                _writeSize(newSize);
-            }
+            _append_size(newSize);
         }
     }
 
@@ -100,10 +99,7 @@ public:
         if (copied > 0)
         {
             unsigned char newSize = preSize + copied;
-            if (preSize == 0 || _str[SIZE-1] != '\0')
-            {
-                _writeSize(newSize);
-            }
+            _append_size(newSize);
         }
         return copied;
     }
@@ -113,13 +109,13 @@ public:
         memset(_str, 0, SIZE);
     }
 private:
-    unsigned char _readSize() const
+    size_t _read_size() const
     {
-        TFdecodeSize(c_str() + SIZE - 1, static_cast<unsigned char*>(0));
+        TFdecodeSize(c_str() + capacity(), static_cast<unsigned char*>(0));
     }
-    void _writeSize(unsigned char sz)
+    void _write_size(unsigned char sz)
     {
-        TFencodeSize(data() + SIZE - 1, sz);
+        TFencodeSize(data() + capacity(), sz);
     }
 
 public:
@@ -201,6 +197,13 @@ public:
         append(str, len);
     }
 
+    template <int SIZE, typename AllocOther>
+    united_tiny_string(const basic_tiny_string<SIZE, AllocOther>& str)
+    {
+        memset(&_umemory, 0, sizeof(_umemory));
+        append(str.c_str(), str.size());
+    }
+
     ~united_tiny_string()
     {
         if (false == tiny_string())
@@ -208,6 +211,40 @@ public:
             _deallocate(_umemory.str, _full_size());
             _umemory.str = nullptr;
         }
+    }
+
+    united_tiny_string(const self_type& that)
+    {
+        memset(&_umemory, 0, sizeof(_umemory));
+        append(that);
+    }
+
+    united_tiny_string(self_type&& that)
+    {
+        memset(&_umemory, 0, sizeof(_umemory));
+        swap(that);
+    }
+
+    self_type& operator =(self_type&& that)
+    {
+        if (this != &that)
+        {
+            clear();
+            swap(that);
+        }
+        return *this;
+    }
+
+    void swap(self_type& that)
+    {
+        if (this == &that)
+        {
+            return;
+        }
+        char tmp[sizeof(*this)];
+        memcpy(tmp, this, sizeof(*this));
+        memcpy(this, &that, sizeof(*this));
+        memcpy(&that, tmp, sizeof(*this));
     }
 
     bool tiny_string() const
@@ -289,7 +326,21 @@ public:
 
     size_t size() const
     {
-        return _read_size();
+        const char* str = c_str();
+        if (nullptr == str || *str == '\0')
+        {
+            return 0;
+        }
+
+        size_t iSize = _read_size();
+        if (iSize == 0)
+        {
+            return capacity();
+        }
+        else
+        {
+            return iSize;
+        }
     }
 
     size_t max_size() const
@@ -302,26 +353,19 @@ public:
         size_t iSize = size();
         bool flag = false;
 
-        if (size() < capacity())
+        iSize++;
+        if (iSize <= capacity())
         {
             flag = _append_local(c);
         }
-        else if(_enlarge(iSize + 1))
+        else if(_enlarge(iSize))
         {
             flag = _append_local(c);
         }
 
         if (flag)
         {
-            iSize++;
-            if (iSize == capacity())
-            {
-                _write_size(0);
-            }
-            else
-            {
-                _write_size(iSize);
-            }
+            _append_size(iSize);
         }
         return *this;
     }
@@ -348,14 +392,7 @@ public:
 
         if (copied > 0)
         {
-            if (iSize == capacity())
-            {
-                _write_size(0);
-            }
-            else
-            {
-                _write_size(iSize);
-            }
+            _append_size(iSize);
         }
         return *this;
     }
@@ -375,7 +412,7 @@ public:
     {
         if (!tiny_string())
         {
-            delete _umemory.str;
+            _deallocate(_umemory.str, _full_size());
         }
         memset(&_umemory, 0, sizeof(_umemory));
     }
@@ -404,13 +441,7 @@ private:
 
     size_t _read_size() const
     {
-        const char* pBegin = c_str();
-        if (nullptr == pBegin || *pBegin == '\0')
-        {
-            return 0;
-        }
-
-        const char* pEnd = pBegin + capacity();
+        const char* pEnd = c_str() + capacity();
     size_t iSize = 0;
         if (tiny_string())
         {
@@ -427,16 +458,6 @@ private:
         else if (large_string())
         {
             iSize = TFdecodeSize(pEnd, &_umemory.meta.largeCapacity);
-        }
-
-        // no end length, overwirte by '\0', full string
-        if (iSize == 0)
-        {
-            return capacity();
-        }
-        else
-        {
-            return iSize;
         }
     }
 

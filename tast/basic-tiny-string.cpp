@@ -39,8 +39,14 @@ void DumpStr(const char* str, size_t len)
     printf("\n");
 }
 
+/* ******************************* */
 
-void tast_basic_append()
+#define UPCASE_LETTERS "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define LOWCASE_LETTERS "abcdefghijklmnopqrstuvwxyz"
+#define DIGITS_DEC "0123456789"
+#define DIGITS_HEX "0123456789ABCDEF"
+
+void tast_basic_tiny()
 {
     char_16t str16;
     char_32t str32;
@@ -48,30 +54,49 @@ void tast_basic_append()
     char_128t str128;
     char_256t str256;
 
+    DESC("sizeof typical tiny string");
     COUT(sizeof(str16));
     COUT(sizeof(str32));
     COUT(sizeof(str64));
     COUT(sizeof(str128));
     COUT(sizeof(str256));
 
+    DESC("and capaicty, should = sizeof - 1");
     COUT(str16.capacity());
     COUT(str32.capacity());
     COUT(str64.capacity());
     COUT(str128.capacity());
     COUT(str256.capacity());
 
+    DESC("default empy zero length string");
     COUT(str16.size());
     COUT(str32.size());
     COUT(str64.size());
     COUT(str128.size());
     COUT(str256.size());
 
+    DESC("normally grow string with append() method");
     str16.append("1358042**98");
     str16.cout();
     COUT(str16.capacity());
     COUT(str16.size());
     DUMP_CHAR(str16);
 
+    DESC("str16 can store dec digits 0-9");
+    str16 = DIGITS_DEC;
+    str16.cout();
+    COUT(str16.capacity());
+    COUT(str16.size());
+    DUMP_CHAR(str16);
+
+    DESC(".. but cannot store hex digits, as must end with '\\0'");
+    str16 = DIGITS_HEX;
+    str16.cout();
+    COUT(str16.capacity());
+    COUT(str16.size());
+    DUMP_CHAR(str16);
+
+    DESC("str32 is enough to store all a-z 26 letters");
     for (int i = 0; i < 26; ++i)
     {
         str32.append('a' + i);
@@ -80,7 +105,7 @@ void tast_basic_append()
     COUT(str32.size());
     DUMP_CHAR(str32);
 
-    // will overflow?
+    DESC("tiny string is fixed capacity, guard not overflow");
     for (int i = 0; i < 26; ++i)
     {
         str32.append('A' + i);
@@ -92,6 +117,7 @@ void tast_basic_append()
 
 void tast_operator()
 {
+    DESC("new tiny string in heap");
     char_32t* p32 = new char_32t("1234");
 
     COUT(p32->capacity());
@@ -99,26 +125,32 @@ void tast_operator()
     COUT(p32->length());
     p32->cout();
 
+    DESC("push_back(c)");
     p32->push_back('$');
     COUT(p32->size());
     p32->cout();
 
+    DESC("operator += char or string, based append");
     (*p32) += '$';
     (*p32) += "4321";
     COUT(p32->size());
     p32->cout();
 
+    DESC("operator << chains");
     (*p32) << '#' << '@' << "abcd";
     COUT(p32->size());
     p32->cout();
 
+    DESC("define tiny string in stack");
     char_32t s32 = "abcd";
     COUT(s32.size());
     s32.cout();
 
+    DESC("default operator= for tiny string, memory copy");
     s32 = (*p32);
     COUT(s32.size());
     s32.cout();
+    COUT(s32 == *p32);
 
     p32->clear();
     COUT(p32->size());
@@ -130,6 +162,7 @@ void tast_ustring_conversion()
 {
     ustring str;
 
+    DESC("convert ustring to basic_tiny_string of different size");
     COUT(str.capacity());
     char_16t* p16 = str.str16();
     COUT(p16 != nullptr);
@@ -161,6 +194,17 @@ void tast_ustring_conversion()
     COUT(str.small_string());
     COUT(str.middle_string());
     COUT(str.size());
+
+    DESC("convert basic_tiny_string to usting with operator=");
+    char_32t s32 = LOWCASE_LETTERS;
+    str = s32;
+    p32 = str.str32();
+    COUT(p32 != nullptr);
+
+    DESC("convert basic_tiny_string to usting with constructor");
+    ustring str2(s32);
+    p32 = str2.str32();
+    COUT(p32 != nullptr);
 }
 
 void tast_ustring_autolarge()
@@ -172,13 +216,13 @@ void tast_ustring_autolarge()
     for (int i = 0; i < 5; ++i)
     {
         std::cout << "push a-z times: " << i << std::endl;
-        str << "abcdefghijklmnopqrstuvwxyz";
+        str << LOWCASE_LETTERS;
         COUT(str.capacity());
         COUT(str.size());
         str.cout();
         // DumpStr(str.c_str(), str.capacity() + 1);
 
-        str << "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        str << UPCASE_LETTERS;
         COUT(str.capacity());
         COUT(str.size());
         str.cout();
@@ -192,8 +236,8 @@ void tast_ustring_autolarge_appendc()
     COUT(str.capacity());
     COUT(str.size());
 
-    char_32t upLetter = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    char_32t lowLetter = "abcdefghijklmnopqrstuvwxyz";
+    char_32t upLetter = UPCASE_LETTERS;
+    char_32t lowLetter = LOWCASE_LETTERS;
 
     for (int i = 0; i < 5; ++i)
     {
@@ -211,13 +255,52 @@ void tast_ustring_autolarge_appendc()
     }
 }
 
+void tast_ustring_compare()
+{
+    DESC("prepare lowStr and upStr:");
+    ustring lowStr = LOWCASE_LETTERS;
+    ustring  upStr =  UPCASE_LETTERS;
+    lowStr.cout();
+    upStr.cout();
+
+    DESC("compre them with operators:");
+    COUT(lowStr == upStr);
+    COUT(lowStr != upStr);
+    COUT(lowStr <= upStr);
+    COUT(lowStr >= upStr);
+    COUT(lowStr < upStr);
+    COUT(lowStr > upStr);
+
+    DESC("make a copy of lowStr");
+    ustring lowCopy(lowStr);
+    COUT(lowStr == lowCopy);
+    COUT(lowStr != lowCopy);
+
+    DESC("make double copy of lowStr");
+    ustring doubleCopy = lowStr; // also copy construtor, not operator=
+    doubleCopy << lowStr;
+    doubleCopy.cout();
+    COUT(lowStr < doubleCopy);
+    COUT(lowStr > doubleCopy);
+
+    DESC("move operator:");
+    const char* preMove = upStr.c_str();
+    ustring upMoveTo = std::move(upStr);
+    COUT(upStr == upMoveTo);
+    COUT(upStr != upMoveTo);
+    COUT(upStr.empty());
+    const char* postMove = upMoveTo.c_str();
+    COUT(preMove == postMove);
+}
+
 int main(int argc, char* argv[])
 {
-    TAST(tast_basic_append);
+    TAST(tast_basic_tiny);
     TAST(tast_operator);
     TAST(tast_ustring_conversion);
     TAST(tast_ustring_autolarge);
     TAST(tast_ustring_autolarge_appendc);
+    TAST(tast_ustring_compare);
 }
 
 // bash: g++ -g -o basic-tiny-string.out basic-tiny-string.cpp

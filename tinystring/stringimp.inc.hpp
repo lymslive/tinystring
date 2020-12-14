@@ -54,6 +54,24 @@ void cout() const
     std::cout << c_str() << std::endl;
 }
 
+void cout(std::ostream& os, bool endl = true) const
+{
+    os << c_str();
+    if (endl)
+    {
+        os << std::endl;
+    }
+}
+
+void cout(FILE* file, bool endl = true) const
+{
+    fprintf(file, "%s", c_str());
+    if (endl)
+    {
+        fprintf(file, "\n");
+    }
+}
+
 char& at(size_t pos)
 {
     return *(data() + pos);
@@ -74,6 +92,12 @@ const char& operator[](size_t pos) const
     return at(pos);
 }
 
+self_type& append(const self_type& that)
+{
+    append(that.c_str(), that.size());
+    return *this;
+}
+
 self_type& operator +=(char c)
 {
     append(c);
@@ -84,6 +108,11 @@ self_type& operator +=(const char* str)
 {
     append(str);
     return *this;
+}
+
+self_type& operator +=(const self_type& that)
+{
+    return append(that);
 }
 
 self_type& operator <<(char c)
@@ -98,6 +127,11 @@ self_type& operator <<(const char* str)
     return *this;
 }
 
+self_type& operator <<(const self_type& that)
+{
+    return append(that);
+}
+
 self_type& operator =(const char* str)
 {
     clear();
@@ -105,9 +139,54 @@ self_type& operator =(const char* str)
     return *this;
 }
 
+self_type& operator =(const self_type& that)
+{
+    if (this != &that)
+    {
+        clear();
+        append(that);
+    }
+    return *this;
+}
+
 void push_back(char c)
 {
     append(c);
+}
+
+int compare(const self_type& that) const
+{
+    return strcmp(this->c_str(), that.c_str());
+}
+
+bool operator ==(const self_type& that) const
+{
+    return compare(that) == 0;
+}
+
+bool operator !=(const self_type& that) const
+{
+    return compare(that) != 0;
+}
+
+bool operator <=(const self_type& that) const
+{
+    return compare(that) <= 0;
+}
+
+bool operator >=(const self_type& that) const
+{
+    return compare(that) >= 0;
+}
+
+bool operator <(const self_type& that) const
+{
+    return compare(that) < 0;
+}
+
+bool operator >(const self_type& that) const
+{
+    return compare(that) > 0;
 }
 
 private:
@@ -165,6 +244,18 @@ size_t _append_local(const char* str, size_t len)
     *(pDest+len) = '\0';
 
     return len;
+}
+
+void _append_size(size_t len)
+{
+    if (len == capacity())
+    {
+        _write_size(0);
+    }
+    else
+    {
+        _write_size(len);
+    }
 }
 
 //};
