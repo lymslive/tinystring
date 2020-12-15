@@ -1,12 +1,12 @@
 ## tast_pool_alone
 -- alloctor property
-|| sizeof(allocator) =~? 1
-|| allocator == other =~? 1
+|| sizeof(allocator) =~? 1 [OK]
+|| allocator == other =~? ture [OK]
 -- alloc 32
 >> malloc free space: 512/32
 >> Split free bock: 32[0]
 >> Return free bock: 32[0]
-|| p32 != nullptr =~? 1
+|| p32 != nullptr =~? ture [OK]
 beyondAllocTimes = 0
 beyondFreeTimes = 0
 allocateTimes = 1
@@ -25,7 +25,7 @@ blance = 0
 -- alloc 64
 >> Split free bock: 64[1]
 >> Return free bock: 64[1]
-|| p64 != nullptr =~? 1
+|| p64 != nullptr =~? ture [OK]
 beyondAllocTimes = 0
 beyondFreeTimes = 0
 allocateTimes = 2
@@ -45,7 +45,7 @@ blance = 0
 >> malloc free space: 2048/128
 >> Split free bock: 128[2]
 >> Return free bock: 128[2]
-|| p128 != nullptr =~? 1
+|| p128 != nullptr =~? ture [OK]
 beyondAllocTimes = 0
 beyondFreeTimes = 0
 allocateTimes = 3
@@ -64,7 +64,7 @@ blance = 0
 -- alloc 256
 >> Split free bock: 256[3]
 >> Return free bock: 256[3]
-|| p256 != nullptr =~? 1
+|| p256 != nullptr =~? ture [OK]
 beyondAllocTimes = 0
 beyondFreeTimes = 0
 allocateTimes = 4
@@ -82,7 +82,7 @@ blance = 0
 
 -- alloc 300: should not alloc in pool
 >> new space beyond pool
-|| p300 != nullptr =~? 1
+|| p300 != nullptr =~? ture [OK]
 beyondAllocTimes = 1
 beyondFreeTimes = 0
 allocateTimes = 4
@@ -100,7 +100,7 @@ blance = 0
 
 -- alloc 200: should actually alloc 256
 >> Return free bock: 256[3]
-|| p200 != nullptr =~? 1
+|| p200 != nullptr =~? ture [OK]
 beyondAllocTimes = 1
 beyondFreeTimes = 0
 allocateTimes = 5
@@ -118,7 +118,7 @@ blance = 0
 
 -- alloc 100: actually alloc 128
 >> Return free bock: 128[2]
-|| p100 != nullptr =~? 1
+|| p100 != nullptr =~? ture [OK]
 beyondAllocTimes = 1
 beyondFreeTimes = 0
 allocateTimes = 6
@@ -136,7 +136,7 @@ blance = 0
 
 -- alloc 50: actually alloc 64
 >> Return free bock: 64[1]
-|| p50 != nullptr =~? 1
+|| p50 != nullptr =~? ture [OK]
 beyondAllocTimes = 1
 beyondFreeTimes = 0
 allocateTimes = 7
@@ -154,7 +154,7 @@ blance = 0
 
 -- alloc 25: actually alloc 32
 >> Return free bock: 32[0]
-|| p25 != nullptr =~? 1
+|| p25 != nullptr =~? ture [OK]
 beyondAllocTimes = 1
 beyondFreeTimes = 0
 allocateTimes = 8
@@ -172,7 +172,7 @@ blance = 0
 
 -- alloc 12: actually alloc 32, min block in pool
 >> Return free bock: 32[0]
-|| p12 != nullptr =~? 1
+|| p12 != nullptr =~? ture [OK]
 beyondAllocTimes = 1
 beyondFreeTimes = 0
 allocateTimes = 9
@@ -286,6 +286,7 @@ totalTimes = 2
 total = 2560
 blance = 0
 
+<< [PASS] tast_pool_alone
 
 ## tast_alloc_lot
 >> Return free bock: 32[0]
@@ -568,4 +569,9 @@ totalTimes = 2
 total = 2560
 blance = 0
 
+|| report.blance =~? 0 [OK]
+<< [PASS] tast_alloc_lot
 
+## Summary
+<< [PASS] 2
+<< [FAIL] 0

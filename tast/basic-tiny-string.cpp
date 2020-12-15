@@ -55,45 +55,45 @@ void tast_basic_tiny()
     char_256t str256;
 
     DESC("sizeof typical tiny string");
-    COUT(sizeof(str16));
-    COUT(sizeof(str32));
-    COUT(sizeof(str64));
-    COUT(sizeof(str128));
-    COUT(sizeof(str256));
+    COUT(sizeof(str16), 16);
+    COUT(sizeof(str32), 32);
+    COUT(sizeof(str64), 64);
+    COUT(sizeof(str128), 128);
+    COUT(sizeof(str256), 256);
 
     DESC("and capaicty, should = sizeof - 1");
-    COUT(str16.capacity());
-    COUT(str32.capacity());
-    COUT(str64.capacity());
-    COUT(str128.capacity());
-    COUT(str256.capacity());
+    COUT(str16.capacity(), 15);
+    COUT(str32.capacity(), 31);
+    COUT(str64.capacity(), 63);
+    COUT(str128.capacity(), 127);
+    COUT(str256.capacity(), 255);
 
     DESC("default empy zero length string");
-    COUT(str16.size());
-    COUT(str32.size());
-    COUT(str64.size());
-    COUT(str128.size());
-    COUT(str256.size());
+    COUT(str16.size(), 0);
+    COUT(str32.size(), 0);
+    COUT(str64.size(), 0);
+    COUT(str128.size(), 0);
+    COUT(str256.size(), 0);
 
     DESC("normally grow string with append() method");
     str16.append("1358042**98");
     str16.cout();
-    COUT(str16.capacity());
-    COUT(str16.size());
+    COUT(str16.capacity(), 15);
+    COUT(str16.size(), 11);
     DUMP_CHAR(str16);
 
     DESC("str16 can store dec digits 0-9");
     str16 = DIGITS_DEC;
     str16.cout();
-    COUT(str16.capacity());
-    COUT(str16.size());
+    COUT(str16.capacity(), 15);
+    COUT(str16.size(), 10);
     DUMP_CHAR(str16);
 
     DESC(".. but cannot store hex digits, as must end with '\\0'");
     str16 = DIGITS_HEX;
     str16.cout();
-    COUT(str16.capacity());
-    COUT(str16.size());
+    COUT(str16.capacity(), 15);
+    COUT(str16.size(), 15);
     DUMP_CHAR(str16);
 
     DESC("str32 is enough to store all a-z 26 letters");
@@ -102,7 +102,7 @@ void tast_basic_tiny()
         str32.append('a' + i);
     }
     str32.cout();
-    COUT(str32.size());
+    COUT(str32.size(), 26);
     DUMP_CHAR(str32);
 
     DESC("tiny string is fixed capacity, guard not overflow");
@@ -111,7 +111,7 @@ void tast_basic_tiny()
         str32.append('A' + i);
     }
     str32.cout();
-    COUT(str32.size());
+    COUT(str32.size(), 31);
     DUMP_CHAR(str32);
 }
 
@@ -120,41 +120,41 @@ void tast_operator()
     DESC("new tiny string in heap");
     char_32t* p32 = new char_32t("1234");
 
-    COUT(p32->capacity());
-    COUT(p32->size());
-    COUT(p32->length());
+    COUT(p32->capacity(), 31);
+    COUT(p32->size(), 4);
+    COUT(p32->length(), 4);
     p32->cout();
 
     DESC("push_back(c)");
     p32->push_back('$');
-    COUT(p32->size());
+    COUT(p32->size(), 5);
     p32->cout();
 
     DESC("operator += char or string, based append");
     (*p32) += '$';
     (*p32) += "4321";
-    COUT(p32->size());
+    COUT(p32->size(), 10);
     p32->cout();
 
     DESC("operator << chains");
     (*p32) << '#' << '@' << "abcd";
-    COUT(p32->size());
+    COUT(p32->size(), 16);
     p32->cout();
 
     DESC("define tiny string in stack");
     char_32t s32 = "abcd";
-    COUT(s32.size());
+    COUT(s32.size(), 4);
     s32.cout();
 
     DESC("default operator= for tiny string, memory copy");
     s32 = (*p32);
-    COUT(s32.size());
+    COUT(s32.size(), 16);
     s32.cout();
-    COUT(s32 == *p32);
+    COUT(s32 == *p32, true);
 
     p32->clear();
-    COUT(p32->size());
-    COUT(p32->empty());
+    COUT(p32->size(), 0);
+    COUT(p32->empty(), true);
     delete p32;
 }
 
@@ -163,48 +163,48 @@ void tast_ustring_conversion()
     ustring str;
 
     DESC("convert ustring to basic_tiny_string of different size");
-    COUT(str.capacity());
+    COUT(str.capacity(), 15);
     char_16t* p16 = str.str16();
-    COUT(p16 != nullptr);
+    COUT(p16 != nullptr, true);
 
     str.enlarge();
-    COUT(str.capacity());
+    COUT(str.capacity(), 31);
     char_32t* p32 = str.str32();
-    COUT(p32 != nullptr);
+    COUT(p32 != nullptr, true);
 
     str.enlarge();
-    COUT(str.capacity());
+    COUT(str.capacity(), 63);
     char_64t* p64 = str.str64();
-    COUT(p64 != nullptr);
+    COUT(p64 != nullptr, true);
 
     str.enlarge();
-    COUT(str.capacity());
+    COUT(str.capacity(), 127);
     char_128t* p128 = str.str128();
-    COUT(p128 != nullptr);
+    COUT(p128 != nullptr, true);
 
     str.enlarge();
-    COUT(str.capacity());
+    COUT(str.capacity(), 255);
     char_256t* p256 = str.str256();
-    COUT(p256 != nullptr);
+    COUT(p256 != nullptr, true);
 
     str.enlarge();
     COUT(str.capacity());
     char_256t* p512 = str.str256();
-    COUT(p512 != nullptr);
-    COUT(str.small_string());
-    COUT(str.middle_string());
+    COUT(p512 != nullptr, false);
+    COUT(str.small_string(), false);
+    COUT(str.middle_string(), true);
     COUT(str.size());
 
     DESC("convert basic_tiny_string to usting with operator=");
     char_32t s32 = LOWCASE_LETTERS;
     str = s32;
     p32 = str.str32();
-    COUT(p32 != nullptr);
+    COUT(p32 != nullptr, true);
 
     DESC("convert basic_tiny_string to usting with constructor");
     ustring str2(s32);
     p32 = str2.str32();
-    COUT(p32 != nullptr);
+    COUT(p32 != nullptr, true);
 }
 
 void tast_ustring_autolarge()
@@ -218,13 +218,13 @@ void tast_ustring_autolarge()
         std::cout << "push a-z times: " << i << std::endl;
         str << LOWCASE_LETTERS;
         COUT(str.capacity());
-        COUT(str.size());
+        COUT(str.size(), 26*(2*i+1));
         str.cout();
         // DumpStr(str.c_str(), str.capacity() + 1);
 
         str << UPCASE_LETTERS;
         COUT(str.capacity());
-        COUT(str.size());
+        COUT(str.size(), 26*(2*i+2));
         str.cout();
         // DumpStr(str.c_str(), str.capacity() + 1);
     }
@@ -250,7 +250,7 @@ void tast_ustring_autolarge_appendc()
             str << lowLetter[j];
         }
         COUT(str.capacity());
-        COUT(str.size());
+        COUT(str.size(), 26*2*(i+1));
         str.cout();
     }
 }
@@ -264,33 +264,33 @@ void tast_ustring_compare()
     upStr.cout();
 
     DESC("compre them with operators:");
-    COUT(lowStr == upStr);
-    COUT(lowStr != upStr);
-    COUT(lowStr <= upStr);
-    COUT(lowStr >= upStr);
-    COUT(lowStr < upStr);
-    COUT(lowStr > upStr);
+    COUT(lowStr == upStr, false);
+    COUT(lowStr != upStr, true);
+    COUT(lowStr <= upStr, false);
+    COUT(lowStr >= upStr, true);
+    COUT(lowStr < upStr, false);
+    COUT(lowStr > upStr, true);
 
     DESC("make a copy of lowStr");
     ustring lowCopy(lowStr);
-    COUT(lowStr == lowCopy);
-    COUT(lowStr != lowCopy);
+    COUT(lowStr == lowCopy, true);
+    COUT(lowStr != lowCopy, false);
 
     DESC("make double copy of lowStr");
     ustring doubleCopy = lowStr; // also copy construtor, not operator=
     doubleCopy << lowStr;
     doubleCopy.cout();
-    COUT(lowStr < doubleCopy);
-    COUT(lowStr > doubleCopy);
+    COUT(lowStr < doubleCopy, true);
+    COUT(lowStr > doubleCopy, false);
 
     DESC("move operator:");
     const char* preMove = upStr.c_str();
     ustring upMoveTo = std::move(upStr);
-    COUT(upStr == upMoveTo);
-    COUT(upStr != upMoveTo);
-    COUT(upStr.empty());
+    COUT(upStr == upMoveTo, false);
+    COUT(upStr != upMoveTo, true);
+    COUT(upStr.empty(), true);
     const char* postMove = upMoveTo.c_str();
-    COUT(preMove == postMove);
+    COUT(preMove == postMove, true);
 }
 
 int main(int argc, char* argv[])
@@ -301,6 +301,8 @@ int main(int argc, char* argv[])
     TAST(tast_ustring_autolarge);
     TAST(tast_ustring_autolarge_appendc);
     TAST(tast_ustring_compare);
+
+    return TAST_RESULT;
 }
 
 // bash: g++ -g -o basic-tiny-string.out basic-tiny-string.cpp

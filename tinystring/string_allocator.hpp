@@ -4,11 +4,11 @@
 #include <new>
 #include <cstdlib>
 
-#ifdef _DEV_DEBUG
+#ifdef _COUT_DEBUG
 #include <cstdio>
-#define DDEBUG(msg, ...) printf(msg, ## __VA_ARGS__); printf("\n")
+#define CDEBUG(msg, ...) printf(">> "); printf(msg, ## __VA_ARGS__); printf("\n")
 #else
-#define DDEBUG(msg, ...)
+#define CDEBUG(msg, ...)
 #endif
 
 template <bool THREAD = false>
@@ -87,7 +87,7 @@ public:
         size_type index = _check_block(nRequest);
         if (index == BLOCK_TOO_LARGE)
         {
-            DDEBUG(">> new space beyond pool");
+            CDEBUG("new space beyond pool");
             _pool.report.beyondAllocTimes++;
             return ::operator new(nRequest);
         }
@@ -99,7 +99,7 @@ public:
         size_type index = _check_block(nReturn);
         if (index == BLOCK_TOO_LARGE)
         {
-            DDEBUG(">> delete space beyond pool");
+            CDEBUG("delete space beyond pool");
             _pool.report.beyondFreeTimes++;
             return ::operator delete(pdead, nReturn);
         }
@@ -142,7 +142,7 @@ private:
         if (nullptr != free)
         {
             // case 1: already have free block of size n.
-            DDEBUG(">> Return free bock: %zd[%zd]", n, index);
+            CDEBUG("Return free bock: %zd[%zd]", n, index);
             void* result = free;
             free = free->next;
             _pool.report.allocateTimes++;
@@ -152,7 +152,7 @@ private:
         else if(nullptr != _pool.freeBegin && _pool.freeBegin + n <= _pool.freeEnd)
         {
             // case 2: still have unlinked free space
-            DDEBUG(">> Split free bock: %zd[%zd]", n, index);
+            CDEBUG("Split free bock: %zd[%zd]", n, index);
             SBlockLink* pBlock = reinterpret_cast<SBlockLink*>(_pool.freeBegin);
             free = pBlock;
             _pool.freeBegin += n;
@@ -170,7 +170,7 @@ private:
             }
             else if (_pool.freeBegin > _pool.freeEnd)
             {
-                DDEBUG("Error!! imposible happend, freeBein > freeEnd");
+                CDEBUG("Error!! imposible happend, freeBein > freeEnd");
             }
             return _allocate(n, index, pHint);
             // recall case 1
@@ -181,20 +181,20 @@ private:
             if (nullptr != _pool.freeBegin)
             {
                 // memory fragment? should not happen?
-                DDEBUG("Error!! Impossible happened, memory fragment");
+                CDEBUG("Error!! Impossible happened, memory fragment");
             }
             size_type chunck = n * EACH_CHUNK * 2;
             void* pMem = ::operator new(chunck);
             if (nullptr == pMem)
             {
-                DDEBUG("Error!! fail to allocate size[%zd]", chunck);
+                CDEBUG("Error!! fail to allocate size[%zd]", chunck);
                 throw std::bad_alloc();
             }
             _pool.freeBegin = static_cast<char*>(pMem);
             _pool.freeEnd = _pool.freeBegin + chunck;
             _pool.report.totalTimes++;
             _pool.report.total += chunck;
-            DDEBUG(">> malloc free space: %zd/%zd", chunck, n);
+            CDEBUG("malloc free space: %zd/%zd", chunck, n);
             return _allocate(n, index, pHint);
             // recall case 2
         }
@@ -223,7 +223,7 @@ private:
         }
         else
         {
-            DDEBUG("Error!! freeBgin and freeEnd should match in both null or non-null");
+            CDEBUG("Error!! freeBgin and freeEnd should match in both null or non-null");
         }
 
         // linked free blocks
@@ -235,7 +235,7 @@ private:
             size_type num = 0;
             while (nullptr != free)
             {
-                // DDEBUG(">> free pointer[%zd]: %p", i, free);
+                // CDEBUG("free pointer[%zd]: %p", i, free);
                 free = free->next;
                 ++num;
             }
@@ -249,7 +249,7 @@ private:
         _pool.report.blance = (_pool.report.freeSpace + sumFreeBlock + usedSpace) - _pool.report.total;
         if (_pool.report.blance != 0)
         {
-            DDEBUG("Error!! pool memory not balanced at current time");
+            CDEBUG("Error!! pool memory not balanced at current time");
         }
     }
 };

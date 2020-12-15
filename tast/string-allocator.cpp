@@ -1,4 +1,4 @@
-#define _DEV_DEBUG
+#define _COUT_DEBUG
 #include "../tinystring/string_allocator.hpp"
 #include "../tinystring/tinystring.hpp"
 #include "tast_util.hpp"
@@ -31,59 +31,59 @@ void tast_pool_alone()
     tinypool other;
 
     DESC("alloctor property");
-    COUT(sizeof(allocator));
-    COUT(allocator == other);
+    COUT(sizeof(allocator), 1);
+    COUT(allocator == other, true);
 
     DESC("alloc 32");
     void* p32 = allocator.allocate(32);
-    COUT(p32 != nullptr);
+    COUT(p32 != nullptr, true);
     // COUT_ADDRESS(p32);
     print_pool_report(allocator.get_pool_report());
 
     DESC("alloc 64");
     void* p64 = allocator.allocate(64);
-    COUT(p64 != nullptr);
+    COUT(p64 != nullptr, true);
     // COUT_ADDRESS(p64);
     print_pool_report(allocator.get_pool_report());
 
     DESC("alloc 128");
     void* p128 = allocator.allocate(128);
-    COUT(p128 != nullptr);
+    COUT(p128 != nullptr, true);
     print_pool_report(allocator.get_pool_report());
 
     DESC("alloc 256");
     void* p256 = allocator.allocate(256);
-    COUT(p256 != nullptr);
+    COUT(p256 != nullptr, true);
     print_pool_report(allocator.get_pool_report());
 
     DESC("alloc 300: should not alloc in pool");
     void* p300 = allocator.allocate(300);
-    COUT(p300 != nullptr);
+    COUT(p300 != nullptr, true);
     print_pool_report(allocator.get_pool_report());
 
     DESC("alloc 200: should actually alloc 256");
     void* p200 = allocator.allocate(200);
-    COUT(p200 != nullptr);
+    COUT(p200 != nullptr, true);
     print_pool_report(allocator.get_pool_report());
 
     DESC("alloc 100: actually alloc 128");
     void* p100 = allocator.allocate(100);
-    COUT(p100 != nullptr);
+    COUT(p100 != nullptr, true);
     print_pool_report(allocator.get_pool_report());
 
     DESC("alloc 50: actually alloc 64");
     void* p50 = allocator.allocate(50);
-    COUT(p50 != nullptr);
+    COUT(p50 != nullptr, true);
     print_pool_report(allocator.get_pool_report());
 
     DESC("alloc 25: actually alloc 32");
     void* p25 = allocator.allocate(25);
-    COUT(p25 != nullptr);
+    COUT(p25 != nullptr, true);
     print_pool_report(allocator.get_pool_report());
 
     DESC("alloc 12: actually alloc 32, min block in pool");
     void* p12 = allocator.allocate(12);
-    COUT(p12 != nullptr);
+    COUT(p12 != nullptr, true);
     print_pool_report(allocator.get_pool_report());
 
     DESC("free 32 64 128 256 blocks");
@@ -133,12 +133,16 @@ void tast_alloc_lot()
         DESC("loop i = %d", i);
         print_pool_report(allocator.get_pool_report());
     }
+
     DESC("out loop");
-    print_pool_report(allocator.get_pool_report());
+    const tinypool::SPoolStatistic& report = allocator.get_pool_report();
+    print_pool_report(report);
+    COUT(report.blance, 0);
 }
 
 int main(int argc, char* argv[])
 {
     TAST(tast_pool_alone);
     TAST(tast_alloc_lot);
+    return TAST_RESULT;
 }
