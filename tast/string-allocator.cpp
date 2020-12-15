@@ -4,6 +4,8 @@
 #include "tast_util.hpp"
 #include <iostream>
 
+using namespace utd;
+
 #define COUT_ADDRESS(ptr) printf("| %s => %p\n", #ptr, ptr)
 
 void print_pool_report(const tinypool::SPoolStatistic& report)

@@ -11,6 +11,9 @@
 #define CDEBUG(msg, ...)
 #endif
 
+namespace utd
+{
+
 template <bool THREAD = false>
 class string_allocator
 {
@@ -265,5 +268,6 @@ bool operator==(const string_allocator<thread>& lhs, const string_allocator<thre
 }
 
 typedef string_allocator<> tinypool;
+}
 
 #endif /* end of include guard: STRING_ALLOCATOR_HPP__ */

@@ -4,6 +4,9 @@
 #include <cstdlib>
 #include <cstdio>
 
+namespace utd
+{
+
 // SizeT maybe one of [(unsgined) char, short, int]
 template <typename SizeT>
 inline 
@@ -140,23 +143,17 @@ public:
 #include "stringimp.inc.hpp"
 };
 
-typedef basic_tiny_string<16> char_16t;
-typedef basic_tiny_string<32> char_32t;
-typedef basic_tiny_string<64> char_64t;
-typedef basic_tiny_string<128> char_128t;
-typedef basic_tiny_string<256> char_256t;
+typedef basic_tiny_string<16> str16_t;
+typedef basic_tiny_string<32> str32_t;
+typedef basic_tiny_string<64> str64_t;
+typedef basic_tiny_string<128> str128_t;
+typedef basic_tiny_string<256> str256_t;
 
 template <typename Allocator = tinypool>
 class united_tiny_string
 {
 public:
     typedef united_tiny_string self_type;
-    typedef basic_tiny_string<16, Allocator> str16_t;
-    typedef basic_tiny_string<32, Allocator> str32_t;
-    typedef basic_tiny_string<64, Allocator> str64_t;
-    typedef basic_tiny_string<128, Allocator> str128_t;
-    typedef basic_tiny_string<256, Allocator> str256_t;
-    typedef unsigned int size_type;
 
 private:
     struct SHeapMeta
@@ -264,47 +261,47 @@ public:
         return _umemory.meta.tinyLength == LARGE_STRING;
     }
 
-    char_16t* str16() const
+    str16_t* str16() const
     {
         if (tiny_string())
         {
-            return reinterpret_cast<char_16t*>(data());
+            return reinterpret_cast<str16_t*>(data());
         }
         return nullptr;
     }
 
-    char_32t* str32() const
+    str32_t* str32() const
     {
         if (small_string() && capacity() == 31)
         {
-            return reinterpret_cast<char_32t*>(data());
+            return reinterpret_cast<str32_t*>(data());
         }
         return nullptr;
     }
 
-    char_64t* str64() const
+    str64_t* str64() const
     {
         if (small_string() && capacity() == 63)
         {
-            return reinterpret_cast<char_64t*>(data());
+            return reinterpret_cast<str64_t*>(data());
         }
         return nullptr;
     }
 
-    char_128t* str128() const
+    str128_t* str128() const
     {
         if (small_string() && capacity() == 127)
         {
-            return reinterpret_cast<char_128t*>(data());
+            return reinterpret_cast<str128_t*>(data());
         }
         return nullptr;
     }
 
-    char_256t* str256() const
+    str256_t* str256() const
     {
         if (small_string() && capacity() == 255)
         {
-            return reinterpret_cast<char_256t*>(data());
+            return reinterpret_cast<str256_t*>(data());
         }
         return nullptr;
     }
@@ -596,3 +593,4 @@ private:
 };
 
 typedef united_tiny_string<> ustring;
+}

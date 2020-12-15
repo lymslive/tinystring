@@ -3,6 +3,8 @@
 #include <cstdio>
 #include "tast_util.hpp"
 
+using namespace utd;
+
 #define DUMP_CHAR(str) DumpChar(str.c_str(), sizeof(str))
 void DumpChar(const char* str, size_t len)
 {
@@ -48,11 +50,11 @@ void DumpStr(const char* str, size_t len)
 
 void tast_basic_tiny()
 {
-    char_16t str16;
-    char_32t str32;
-    char_64t str64;
-    char_128t str128;
-    char_256t str256;
+    str16_t str16;
+    str32_t str32;
+    str64_t str64;
+    str128_t str128;
+    str256_t str256;
 
     DESC("sizeof typical tiny string");
     COUT(sizeof(str16), 16);
@@ -118,7 +120,7 @@ void tast_basic_tiny()
 void tast_operator()
 {
     DESC("new tiny string in heap");
-    char_32t* p32 = new char_32t("1234");
+    str32_t* p32 = new str32_t("1234");
 
     COUT(p32->capacity(), 31);
     COUT(p32->size(), 4);
@@ -142,7 +144,7 @@ void tast_operator()
     p32->cout();
 
     DESC("define tiny string in stack");
-    char_32t s32 = "abcd";
+    str32_t s32 = "abcd";
     COUT(s32.size(), 4);
     s32.cout();
 
@@ -164,39 +166,39 @@ void tast_ustring_conversion()
 
     DESC("convert ustring to basic_tiny_string of different size");
     COUT(str.capacity(), 15);
-    char_16t* p16 = str.str16();
+    str16_t* p16 = str.str16();
     COUT(p16 != nullptr, true);
 
     str.enlarge();
     COUT(str.capacity(), 31);
-    char_32t* p32 = str.str32();
+    str32_t* p32 = str.str32();
     COUT(p32 != nullptr, true);
 
     str.enlarge();
     COUT(str.capacity(), 63);
-    char_64t* p64 = str.str64();
+    str64_t* p64 = str.str64();
     COUT(p64 != nullptr, true);
 
     str.enlarge();
     COUT(str.capacity(), 127);
-    char_128t* p128 = str.str128();
+    str128_t* p128 = str.str128();
     COUT(p128 != nullptr, true);
 
     str.enlarge();
     COUT(str.capacity(), 255);
-    char_256t* p256 = str.str256();
+    str256_t* p256 = str.str256();
     COUT(p256 != nullptr, true);
 
     str.enlarge();
     COUT(str.capacity());
-    char_256t* p512 = str.str256();
+    str256_t* p512 = str.str256();
     COUT(p512 != nullptr, false);
     COUT(str.small_string(), false);
     COUT(str.middle_string(), true);
     COUT(str.size());
 
     DESC("convert basic_tiny_string to usting with operator=");
-    char_32t s32 = LOWCASE_LETTERS;
+    str32_t s32 = LOWCASE_LETTERS;
     str = s32;
     p32 = str.str32();
     COUT(p32 != nullptr, true);
@@ -236,8 +238,8 @@ void tast_ustring_autolarge_appendc()
     COUT(str.capacity());
     COUT(str.size());
 
-    char_32t upLetter = UPCASE_LETTERS;
-    char_32t lowLetter = LOWCASE_LETTERS;
+    str32_t upLetter = UPCASE_LETTERS;
+    str32_t lowLetter = LOWCASE_LETTERS;
 
     for (int i = 0; i < 5; ++i)
     {
