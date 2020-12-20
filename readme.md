@@ -47,6 +47,10 @@ typedef united_tiny_string<> ustring;
 
 `utd::ustring` 支持大部分类似标准 `std::string` 的常用函数与操作。
 
+### 内存模型示意图
+
+![memory.png](./doc/memory.png)
+
 ### 小字符串内存池
 
 用内存池技术实现了配套的 allocator 。
