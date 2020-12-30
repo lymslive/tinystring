@@ -48,13 +48,13 @@ void cout_value(bool tf)
 }
 
 template <typename T>
-void cout_value(T value)
+void cout_value(const T& value)
 {
     std::cout << value;
 }
 
 template <typename T>
-void cout(const char* strExpr, T valExpr)
+void cout(const char* strExpr, const T& valExpr)
 {
     printf("|| %s =~? ", strExpr);
     cout_value(valExpr);
@@ -63,7 +63,7 @@ void cout(const char* strExpr, T valExpr)
 
 
 template <typename U, typename V>
-void cout(const char* strExpr, U valExpr, V valExpect)
+void cout(const char* strExpr, const U& valExpr, const V& valExpect)
 {
     printf("|| %s =~? ", strExpr);
     cout_value(valExpr);
