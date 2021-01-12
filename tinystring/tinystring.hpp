@@ -216,13 +216,13 @@ public:
         append(that);
     }
 
-    united_tiny_string(self_type&& that)
+    united_tiny_string(self_type&& that) noexcept
     {
         memset(&_umemory, 0, sizeof(_umemory));
         swap(that);
     }
 
-    self_type& operator =(self_type&& that)
+    self_type& operator =(self_type&& that) noexcept
     {
         if (this != &that)
         {
