@@ -104,7 +104,11 @@ public:
         {
             CDEBUG("delete space beyond pool");
             _pool.report.beyondFreeTimes++;
+#if __cpp_sized_deallocation
             return ::operator delete(pdead, nReturn);
+#else
+            return ::operator delete(pdead);
+#endif
         }
         return _deallocate(pdead, nReturn, index);
     }
