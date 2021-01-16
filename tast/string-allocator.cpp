@@ -1,6 +1,6 @@
 #define _COUT_DEBUG
-#include "../tinystring/string_allocator.hpp"
-#include "../tinystring/tinystring.hpp"
+#include "../src/string_allocator.hpp"
+#include "../src/tinystring.hpp"
 #include "tast_util.hpp"
 #include <iostream>
 

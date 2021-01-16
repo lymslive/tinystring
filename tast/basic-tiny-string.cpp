@@ -1,4 +1,4 @@
-#include "../tinystring/tinystring.hpp"
+#include "../src/tinystring.hpp"
 #include <iostream>
 #include <cstdio>
 #include "tast_util.hpp"
