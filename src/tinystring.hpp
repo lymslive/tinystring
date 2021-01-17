@@ -594,3 +594,18 @@ private:
 
 typedef united_tiny_string<> ustring;
 }
+
+// overload << stream out operator for these string classes
+template <int SIZE, typename Allocator>
+std::ostream& operator<<(std::ostream& os, const utd::basic_tiny_string<SIZE, Allocator>& str)
+{
+    os << str.c_str();
+    return os;
+}
+
+template <typename Allocator>
+std::ostream& operator<<(std::ostream& os, const utd::united_tiny_string<Allocator>& str)
+{
+    os << str.c_str();
+    return os;
+}

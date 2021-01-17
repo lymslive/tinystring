@@ -26,7 +26,9 @@ bout : $(TAST_BOUT)
 
 %.cout : %.out
 	./$< $(TEE) $@
-	diff $@ $(patsubst %.cout, %.bout, $@)
+	@ if [ -r $(patsubst %.cout, %.bout, $@) ]; then diff $@ $(patsubst %.cout, %.bout, $@); fi 
+
+# [[ -r $(patsubst %.cout, %.bout, $@) ]] && diff $@ $(patsubst %.cout, %.bout, $@)
 
 %.bout : %.cout
 	cp $< $@
