@@ -17,7 +17,7 @@ namespace utd
 inline
 std::ostream& operator<<(std::ostream& os, const utd::tstring& str)
 {
-    os << std::get<0>(str);
+    os.write(std::get<0>(str), std::get<1>(str));
     return os;
 }
 
@@ -136,37 +136,37 @@ const_iterator cend(const strT& self)
 template <typename strT>
 iterator begin(strT& self)
 {
-    return const_cast<iterator>(cbegin(self));
+    return const_cast<iterator>(utd::str::cbegin(self));
 }
 
 template <typename strT>
 iterator end(strT& self)
 {
-    return const_cast<iterator>(cend(self));
+    return const_cast<iterator>(utd::str::cend(self));
 }
 
 template <typename strT>
 reverse_iterator rbegin(strT& self)
 {
-    return std::reverse_iterator<iterator>(end(self));
+    return std::reverse_iterator<iterator>(utd::str::end(self));
 }
 
 template <typename strT>
 reverse_iterator rend(strT& self)
 {
-    return std::reverse_iterator<iterator>(begin(self));
+    return std::reverse_iterator<iterator>(utd::str::begin(self));
 }
 
 template <typename strT>
 const_reverse_iterator crbegin(const strT& self)
 {
-    return std::reverse_iterator<const_iterator>(cend(self));
+    return std::reverse_iterator<const_iterator>(utd::str::cend(self));
 }
 
 template <typename strT>
 const_reverse_iterator crend(const strT& self)
 {
-    return std::reverse_iterator<const_iterator>(cbegin(self));
+    return std::reverse_iterator<const_iterator>(utd::str::cbegin(self));
 }
 
 // output
@@ -405,27 +405,28 @@ tstring mid(const strT& self, size_t pos, size_t len)
 }
 
 template <typename strT>
-std::vector<tstring> split(const strT& self, const std::vector<size_t>& vecPos, bool keepend = false, bool merge = false)
+std::vector<tstring> split(const strT& self, const std::vector<size_t>& vecPos, bool keepEmpty)
 {
-    const char* buffer = c_str(self);
+    const char* buffer = utd::str::cbegin(self);
     const char* pSlice = nullptr;
     size_t nSlice = 0;
-    size_t lastPos = 0;
+    size_t lastPos = size_t(-1);
     std::vector<tstring> result;
     for (size_t pos : vecPos)
     {
         if (pos == 0)
         {
-            if (keepend)
+            if (keepEmpty)
             {
                 result.push_back(std::make_tuple(buffer, 0));
             }
         }
         else
         {
-            pSlice = buffer + pos;
-            nSlice = pos - lastPos - 1;
-            if (nSlice > 0 || !merge)
+            ++lastPos;
+            pSlice = buffer + lastPos;
+            nSlice = pos - lastPos;
+            if (nSlice > 0 || keepEmpty)
             {
                 result.push_back(std::make_tuple(pSlice, nSlice));
             }
@@ -435,7 +436,7 @@ std::vector<tstring> split(const strT& self, const std::vector<size_t>& vecPos, 
     }
 
     size_t nSize = size(self);
-    if (lastPos + 1 == nSize && keepend)
+    if (lastPos + 1 == nSize && keepEmpty)
     {
         result.push_back(std::make_tuple(buffer + nSize, 0));
     }
@@ -444,10 +445,10 @@ std::vector<tstring> split(const strT& self, const std::vector<size_t>& vecPos, 
 }
 
 template <typename strT>
-std::vector<tstring> split(const strT& self, char c, bool keepend = false, bool merge = false)
+std::vector<tstring> split(const strT& self, char c, bool keepEmpty = false)
 {
     std::vector<size_t> vecPos;
-    const char* ptr = c_str(self);
+    const char* ptr = utd::str::cbegin(self);
     size_t nSize = size(self);
     for (size_t i = 0; i < nSize; ++i, ++ptr)
     {
@@ -457,14 +458,14 @@ std::vector<tstring> split(const strT& self, char c, bool keepend = false, bool 
         }
     }
 
-    return split(self, vecPos, keepend, merge);
+    return split(self, vecPos, keepEmpty);
 }
 
 template <typename strT, typename strU>
-std::vector<tstring> split(const strT& self, const strU& that, bool keepend = false, bool merge = true)
+std::vector<tstring> split(const strT& self, const strU& that, bool keepEmpty = false)
 {
     std::vector<size_t> vecPos;
-    const char* ptr = c_str(self);
+    const char* ptr = utd::str::cbegin(self);
     size_t nSize = size(self);
     for (size_t i = 0; i < nSize; ++i, ++ptr)
     {
@@ -474,11 +475,12 @@ std::vector<tstring> split(const strT& self, const strU& that, bool keepend = fa
         }
     }
 
-    return split(self, vecPos, keepend, merge);
+    return split(self, vecPos, keepEmpty);
 }
 
 // limited modifing string without change it size, in-palce modify.
-
+#define STRING_MODIFY_INPLACE
+#ifdef STRING_MODIFY_INPLACE
 template <typename strT>
 void upper(strT& self)
 {
@@ -574,7 +576,10 @@ void reverse(strT& self)
         ++first;
     }
 }
+#endif
 
+#define STRING_MODIFY_REDUCE
+#ifdef STRING_MODIFY_REDUCE
 // limited modifing string without alloc, but may reduce size
 // these functions return the reduced diff size, the count of removed char.
 
@@ -799,7 +804,10 @@ size_t trim_any(strT& self, const strU& that)
     }
     return count;
 }
+#endif
 
+#undef STRING_MODIFY_INPLACE
+#undef STRING_MODIFY_REDUCE
 }}
 
 #endif /* end of include guard: FUNCTION_HPP__ */
